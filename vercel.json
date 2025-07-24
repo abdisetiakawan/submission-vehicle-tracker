@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "vehicle-tracker-server/src/index.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "vehicle-tracker-client/next.config.ts",
+      "use": "@vercel/next"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/vehicle-tracker-client/$1"
+    }
+  ]
+}
