@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Vehicle, VehicleStore } from "../types/vehicle";
-import { mockApi } from "../data/mock_data";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const useVehicleStore = create<VehicleStore>((set) => ({
   vehicles: [],
@@ -11,24 +12,37 @@ export const useVehicleStore = create<VehicleStore>((set) => ({
   fetchVehicles: async () => {
     set({ isLoading: true, error: null });
     try {
-      const vehicles = await mockApi.fetchVehicles();
-      set({ vehicles, isLoading: false });
+      const response = await fetch(`${API_URL}/vehicles`);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      set({ vehicles: data.vehicles, isLoading: false });
     } catch (error: unknown) {
+      console.error("Fetch vehicles error:", error);
       set({ error: "Failed to fetch vehicles", isLoading: false });
     }
   },
 
   fetchVehicleById: async (id: number) => {
-    set({ isLoading: true, error: null });
+    set({ isLoading: true, error: null, selectedVehicle: null });
     try {
-      const vehicle = await mockApi.fetchVehicleById(id);
-      if (vehicle) {
-        set({ selectedVehicle: vehicle, isLoading: false });
-      } else {
-        set({ error: "Vehicle not found", isLoading: false });
+      const response = await fetch(`${API_URL}/vehicles/${id}`);
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error("Vehicle not found");
+        }
+        throw new Error("Network response was not ok");
       }
+      const data = await response.json();
+      set({ selectedVehicle: data.vehicle, isLoading: false });
     } catch (error: unknown) {
-      set({ error: "Failed to fetch vehicle details", isLoading: false });
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch vehicle details";
+      console.error("Fetch vehicle by ID error:", errorMessage);
+      set({ error: errorMessage, isLoading: false });
     }
   },
 
