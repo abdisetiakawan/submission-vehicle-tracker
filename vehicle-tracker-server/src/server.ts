@@ -25,16 +25,28 @@ const app = express();
 // Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || origin.endsWith('.vercel.app') || origin === 'http://localhost:3001') {
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    // Logging untuk melihat origin yang masuk
+    console.log('INCOMING_REQUEST_ORIGIN:', origin);
+
+    // Regex untuk mencocokkan semua subdomain vercel.app
+    const vercelRegex = /https:\/\/submission-vehicle-tracker.*\.vercel\.app$/;
+
+    // Izinkan localhost dan semua URL Vercel yang cocok dengan regex
+    if (!origin || origin === 'http://localhost:3001' || vercelRegex.test(origin)) {
+      console.log('CORS_ALLOWED_ORIGIN:', origin);
       callback(null, true);
     } else {
+      console.error('CORS_BLOCKED_ORIGIN:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
-}));
+};
+
+app.use(cors(corsOptions));
+
 
 
 app.use(cookieParser());
