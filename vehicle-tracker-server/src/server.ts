@@ -26,14 +26,11 @@ const app = express();
 // Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: "https://submission-vehicle-tracker.vercel.app",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+app.use(cors({
+  credentials: true,
+  origin: true
+}));
+
 app.use(cookieParser());
 
 // Show routes called in console during development
