@@ -1,19 +1,17 @@
 {
   "version": 2,
   "builds": [
+    { "src": "vehicle-tracker-client/package.json", "use": "@vercel/next" },
+    { "src": "vehicle-tracker-server/src/index.ts", "use": "@vercel/node" }
+  ],
+  "routes": [
     {
-      "src": "vehicle-tracker-client/package.json",
-      "use": "@vercel/next"
+      "src": "/api/(.*)",
+      "dest": "/vehicle-tracker-server/src/index.ts"
     },
     {
-      "src": "vehicle-tracker-server/src/index.ts",
-      "use": "@vercel/node"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api"
+      "src": "/(.*)",
+      "dest": "/vehicle-tracker-client/$1"
     }
   ]
 }
