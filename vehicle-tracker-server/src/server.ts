@@ -25,27 +25,10 @@ const app = express();
 // Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    // Logging untuk melihat origin yang masuk
-    console.log('INCOMING_REQUEST_ORIGIN:', origin);
-
-    // Regex untuk mencocokkan semua subdomain vercel.app
-    const vercelRegex = /https:\/\/submission-vehicle-tracker.*\.vercel\.app$/;
-
-    // Izinkan localhost dan semua URL Vercel yang cocok dengan regex
-    if (!origin || origin === 'http://localhost:3001' || vercelRegex.test(origin)) {
-      console.log('CORS_ALLOWED_ORIGIN:', origin);
-      callback(null, true);
-    } else {
-      console.error('CORS_BLOCKED_ORIGIN:', origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+app.use(cors({
   credentials: true,
-};
-
-app.use(cors(corsOptions));
+  origin: true
+}));
 
 
 
