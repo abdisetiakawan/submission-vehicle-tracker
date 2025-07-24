@@ -22,18 +22,24 @@ const app = express();
 
 
 // **** Middleware **** //
-
+const allowedOrigins = [
+  'http://localhost:3001',
+  'https://submission-vehicle-tracker-dewilaars-abdi-setiawans-projects.vercel.app' // <-- TAMBAHKAN URL FRONTEND ANDA DI SINI
+];
 // Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: "https://submission-vehicle-tracker.vercel.app/",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
+
 app.use(cookieParser());
 
 // Show routes called in console during development
