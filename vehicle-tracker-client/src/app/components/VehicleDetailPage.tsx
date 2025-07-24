@@ -37,7 +37,7 @@ const VehicleDetailPage: React.FC<VehicleDetailPageProps> = ({ id }) => {
     };
   }, [id, fetchVehicleById, clearSelectedVehicle]);
 
-  if (isLoading && !selectedVehicle) {
+  if (isLoading || (!selectedVehicle && !error)) {
     return (
       <Layout>
         <VehicleDetailSkeleton />
@@ -45,19 +45,11 @@ const VehicleDetailPage: React.FC<VehicleDetailPageProps> = ({ id }) => {
     );
   }
 
-  if (error) {
-    return (
-      <Layout>
-        <ErrorDisplay message={error} onRetry={() => router.push("/")} />
-      </Layout>
-    );
-  }
-
-  if (!selectedVehicle) {
+  if (error || !selectedVehicle) {
     return (
       <Layout>
         <ErrorDisplay
-          message="Vehicle not found"
+          message={error || "Vehicle not found"}
           onRetry={() => router.push("/")}
         />
       </Layout>

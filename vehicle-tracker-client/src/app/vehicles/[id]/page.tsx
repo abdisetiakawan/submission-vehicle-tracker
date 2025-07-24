@@ -1,17 +1,7 @@
-import VehicleDetailPage from "../../components/VehicleDetailPage";
+import VehicleDetailPage from "@/app/components/VehicleDetailPage";
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
+export default async function Page({ params }: { params: { id: string } }) {
+  const { id } = await params;
 
-export default function VehicleDetail({ params }: PageProps) {
-  return <VehicleDetailPage id={params.id} />;
-}
-
-export async function generateStaticParams() {
-  return Array.from({ length: 6 }, (_, i) => ({
-    id: (i + 1).toString(),
-  }));
+  return <VehicleDetailPage id={id} />;
 }
