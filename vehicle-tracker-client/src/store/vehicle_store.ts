@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Vehicle, VehicleStore } from "../types/vehicle";
+import { VehicleStore } from "../types/vehicle";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -12,9 +12,11 @@ export const useVehicleStore = create<VehicleStore>((set) => ({
   fetchVehicles: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch(`${API_URL}/vehicles`);
+      const response = await fetch(`${API_URL}/vehicles`, {
+        credentials: 'include',
+      });
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error('Failed to fetch vehicles. Are you logged in?');
       }
       const data = await response.json();
       set({ vehicles: data.vehicles, isLoading: false });
@@ -27,7 +29,9 @@ export const useVehicleStore = create<VehicleStore>((set) => ({
   fetchVehicleById: async (id: number) => {
     set({ isLoading: true, error: null, selectedVehicle: null });
     try {
-      const response = await fetch(`${API_URL}/vehicles/${id}`);
+      const response = await fetch(`${API_URL}/vehicles/${id}`, {
+        credentials: 'include',
+      });
       if (!response.ok) {
         if (response.status === 404) {
           throw new Error("Vehicle not found");
